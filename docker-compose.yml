@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  web:
+    container_name: td_cordmarston_com
+    build:
+      context: ./
+      target: runner
+    tty: true 
+    stdin_open: true
+    restart: always
+    command: npm run dev
+    volumes:
+      - .:/app
+    ports:
+      - "1748:1748"
+    networks:
+      - npmnetwork
+networks:
+  npmnetwork:
+    external: true
+    driver: bridge

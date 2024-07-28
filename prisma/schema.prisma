@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database/db.sql"
+}
+
+model Country {
+  id              Int             @id @default(autoincrement())
+  country_name    String          @unique
+  code            String          
+  region          RegionCountry[]
+  detail          CountryDetail?   
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Region {
+  id            Int           @id @default(autoincrement())
+  region_name   String        @unique
+  country       RegionCountry[]
+}
+
+model RegionCountry {
+  country         Country     @relation(fields: [countryId], references: [id])
+  countryId       Int     
+  region          Region      @relation(fields: [regionId], references: [id])
+  regionId        Int
+  @@id([countryId, regionId])
+}
+
+model CountryDetail {
+  id              Int                   @id @default(autoincrement())
+  country         Country               @relation(fields: [countryId], references: [id])     
+  countryId       Int                   @unique
+  latlng          String
+  population      Int
+  language        CountryLanguage[]
+}
+
+model Language {
+  id              Int           @id @default(autoincrement())
+  language_name   String        @unique
+  detail          CountryLanguage[]
+}
+
+model CountryLanguage {
+  detail          CountryDetail     @relation(fields: [detailId], references: [id])
+  detailId        Int     
+  language        Language          @relation(fields: [languageId], references: [id])
+  languageId      Int
+  @@id([detailId, languageId])
+}
