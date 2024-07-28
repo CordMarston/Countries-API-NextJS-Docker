@@ -20,6 +20,7 @@ export default function CardBody() {
     const [pageNumber, setPageNumber] = useState(1);
     const [countryCode, setCountryCode] = useState('');
     const [sortDirection, setSortDirection] = useState('asc');
+    const [displayUrl, setDisplayUrl] = useState('');
 
     const queryApi = async () => {
         let url = apiRoute;
@@ -28,11 +29,12 @@ export default function CardBody() {
         } else if(url == '/api/countries/') {
             url = url+countryCode;
         }
+
+        setDisplayUrl(url);
+
         const getRoute = await fetch(url);
 
-
         if (!getRoute.ok) {
-            // This will activate the closest `error.js` Error Boundary
             throw new Error('Failed to fetch data')
           }
         
@@ -73,19 +75,19 @@ export default function CardBody() {
             {apiRoute == '/api/countries' &&
                 <div className="flex items-center gap-x-2">
                     <Input type="number" placeholder="Page" min="1" step="1" value={pageNumber} onChange={changePage}/>
-                
-                <Select value={sortDirection} onValueChange={setSortDirection}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Sort Direction" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="asc">ASC</SelectItem>
-                            <SelectItem value="desc">DESC</SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                    <Select value={sortDirection} onValueChange={setSortDirection}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Sort Direction" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="asc">ASC</SelectItem>
+                                <SelectItem value="desc">DESC</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
+                
             }
             {apiRoute == '/api/countries/' &&
                  <div className="flex items-center">
@@ -99,9 +101,15 @@ export default function CardBody() {
             </div>
         </div>
         <div className="grow py-2">
-            <div className="bg-neutral-100 h-96 overflow-auto">
-                <pre>{JSON.stringify({'response': apiResponse}, null, 3)}</pre>
-            </div>
+            {(apiRoute == '/api/countries/' && !countryCode) && <span className="text-red-600 text-xs">Without a code this will return the /api/countries route response. Please provide a code to view specific details.</span>}
+            {displayUrl &&
+                <>
+                    <div className="bg-slate-300 rounded p-2 mb-2">{displayUrl}</div>
+                    <div className="bg-neutral-100 h-96 overflow-auto">
+                        <pre>{JSON.stringify({'response': apiResponse}, null, 3)}</pre>
+                    </div>
+                </>
+            }
         </div>
         </>
     )
