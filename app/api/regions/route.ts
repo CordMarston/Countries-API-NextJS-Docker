@@ -1,12 +1,20 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest } from 'next/server';
-import { FaObjectGroup } from 'react-icons/fa';
 
 const prisma = new PrismaClient()
 
-export async function GET(req:NextRequest, { params }: { params: { code: string } }) {
-
+export async function GET(req:NextRequest) {
+    let direction = req.nextUrl.searchParams.get("sort");
+    let sortDirection: 'asc' | 'desc';
+    if(direction == 'desc') {
+      sortDirection = 'desc';
+    } else {
+      sortDirection = 'asc';
+    }
     const regions = await prisma.region.findMany({
+        orderBy: {
+            region_name: sortDirection,
+        },
         include: {
             country: {
                 select: {

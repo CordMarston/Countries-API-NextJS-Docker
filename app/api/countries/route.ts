@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 export async function GET(req:NextRequest) {
 
     let page = req.nextUrl.searchParams.get("page");
-    let direction = req.nextUrl.searchParams.get("direction");
+    let direction = req.nextUrl.searchParams.get("sort");
     let sortDirection: 'asc' | 'desc';
     if(direction == 'desc') {
       sortDirection = 'desc';

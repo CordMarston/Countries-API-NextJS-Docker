@@ -3,9 +3,18 @@ import { NextRequest } from 'next/server';
 
 const prisma = new PrismaClient()
 
-export async function GET(req:NextRequest, { params }: { params: { code: string } }) {
-
+export async function GET(req:NextRequest) {
+    let direction = req.nextUrl.searchParams.get("sort");
+    let sortDirection: 'asc' | 'desc';
+    if(direction == 'desc') {
+      sortDirection = 'desc';
+    } else {
+      sortDirection = 'asc';
+    }
     const languages = await prisma.language.findMany({
+        orderBy: {
+            language_name: sortDirection
+        },
         include: {
             detail: {
                 select: {
