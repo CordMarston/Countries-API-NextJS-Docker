@@ -27,16 +27,16 @@ model Region {
 }
 
 model RegionCountry {
-  country         Country     @relation(fields: [countryId], references: [id])
+  country         Country     @relation(fields: [countryId], references: [id], onDelete: Cascade)
   countryId       Int     
-  region          Region      @relation(fields: [regionId], references: [id])
+  region          Region      @relation(fields: [regionId], references: [id], onDelete: Cascade)
   regionId        Int
   @@id([countryId, regionId])
 }
 
 model CountryDetail {
   id              Int                   @id @default(autoincrement())
-  country         Country               @relation(fields: [countryId], references: [id])     
+  country         Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)     
   countryId       Int                   @unique
   latlng          String
   population      Int
@@ -50,9 +50,9 @@ model Language {
 }
 
 model CountryLanguage {
-  detail          CountryDetail     @relation(fields: [detailId], references: [id])
+  detail          CountryDetail     @relation(fields: [detailId], references: [id], onDelete: Cascade)
   detailId        Int     
-  language        Language          @relation(fields: [languageId], references: [id])
+  language        Language          @relation(fields: [languageId], references: [id], onDelete: Cascade)
   languageId      Int
   @@id([detailId, languageId])
 }

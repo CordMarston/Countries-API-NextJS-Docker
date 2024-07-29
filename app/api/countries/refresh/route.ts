@@ -17,7 +17,9 @@ export async function GET(request: Request) {
   const data = await res.json();
   
   // Delete all  prior to re-entering data (could be updated with upserts just no time)
-  execPromisify('npx prisma migrate reset --force --skip-seed');
+  // await execPromisify('npx prisma migrate dev --skip-seed');
+
+  await prisma.country.deleteMany();
 
   for(let cont of data) {
     let language_name:string = "";
