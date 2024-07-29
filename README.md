@@ -22,36 +22,11 @@ If launching this on a docker server it will run in development mode on port 174
 
 ### Standard
 
-To launch on a local server or you will just need to run "npm run dev" to make development changes. Or you can run "npm run prod" to have NextJS generate HTML pages for production use.
+To launch on a local server or you will just need to run "npm run dev" to make development changes. Or you can run "npm run build" to have NextJS generate HTML pages for production use. Once they are built you can run "npm run start"
 
 ### Database
 
-The database config is in the .env file. Currently it is set to use SQLite and save to /prisma/database/db.sql - However, it is recommended to use MySQL (tested and working) or Postgres for security purposes.  To switch to MySQL you will need to edit the prisma DATABASE_URL in the .env file along with replace line 20 in the /app/api/countries/refresh/route.ts with the following (td in the code below is the name of the database):
-```
-const transactions: PrismaPromise<any>[] = []
-transactions.push(prisma.$executeRaw`SET FOREIGN_KEY_CHECKS = 0;`)
-
-const tablenames = await prisma.$queryRaw<
-  Array<{ TABLE_NAME: string }>
->`SELECT TABLE_NAME from information_schema.TABLES WHERE TABLE_SCHEMA = 'td';`
-
-for (const { TABLE_NAME } of tablenames) {
-  if (TABLE_NAME !== '_prisma_migrations') {
-    try {
-      transactions.push(prisma.$executeRawUnsafe(`TRUNCATE ${TABLE_NAME};`))
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-}
-
-transactions.push(prisma.$executeRaw`SET FOREIGN_KEY_CHECKS = 1;`)
-
-try {
-  await prisma.$transaction(transactions)
-} catch (error) {
-  console.log({ error })
-}
+The database config is in the .env file. Currently it is set to use SQLite and save to /prisma/database/db.sql - However, it is recommended to use MySQL (tested and working) or Postgres for security purposes.  To switch to MySQL you will need to edit the prisma DATABASE_URL in the .env file 
 ```
 
 

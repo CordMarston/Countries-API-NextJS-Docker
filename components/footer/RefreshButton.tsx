@@ -11,7 +11,7 @@ export default function RefreshButton() {
     const refreshBackend = async () => {
         setLoading(true);
         setButtonMessage('Refreshing');
-        const res = await fetch('/api/countries/refresh/').then((data) => {
+        const res = await fetch('/api/countries/refresh/', { next: { revalidate: 0 } }).then((data) => {
             setLoading(false)
             setButtonMessage('Refreshed at '+new Date().toLocaleString());
         })

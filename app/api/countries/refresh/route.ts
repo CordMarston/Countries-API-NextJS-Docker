@@ -1,15 +1,10 @@
-// import fs from 'fs';
-import { PrismaClient, PrismaPromise } from '@prisma/client'
-import { exec } from 'child_process';
-import * as util from 'util';
-
-const execPromisify = util.promisify(exec);
+import { PrismaClient} from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 export async function GET(request: Request) {
-
-  const res = await fetch('https://restcountries.com/v3.1/all');
+  const { searchParams } = new URL(request.url);
+  const res = await fetch('https://restcountries.com/v3.1/all', { next: { revalidate: 0 } });
   if (!res.ok) {
     throw new Error('Failed to fetch data')
   }
@@ -17,9 +12,10 @@ export async function GET(request: Request) {
   const data = await res.json();
   
   // Delete all  prior to re-entering data (could be updated with upserts just no time)
-  // await execPromisify('npx prisma migrate dev --skip-seed');
-
-  await prisma.country.deleteMany();
+  const deleteCountries = prisma.country.deleteMany();
+  const deleteLanguages = prisma.language.deleteMany();
+  const deleteRegions = prisma.region.deleteMany();
+  await prisma.$transaction([deleteCountries, deleteLanguages, deleteRegions]);
 
   for(let cont of data) {
     let language_name:string = "";
@@ -74,5 +70,5 @@ export async function GET(request: Request) {
       },
     })
   };
-  return new Response('Done', {status: 200})
+  return new Response('Done at '+new Date().toLocaleString(), {status: 200})
 }

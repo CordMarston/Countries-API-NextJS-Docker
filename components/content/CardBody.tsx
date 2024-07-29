@@ -34,7 +34,7 @@ export default function CardBody() {
 
         setDisplayUrl(url);
 
-        const getRoute = await fetch(url);
+        const getRoute = await fetch(url, { next: { revalidate: 60 } });
 
         if (!getRoute.ok) {
             throw new Error('Failed to fetch data')
